@@ -1,53 +1,69 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Static Tee Designer</title>
-        <style>
-            .drawing-area{
-                position: absolute;
-                top: 60px;
-                left: 122px;
-                z-index: 10;
-                width: 200px;
-                height: 400px;
-            }
+<html lang="en">
 
-            .canvas-container{
-                width: 200px;
-                height: 400px;
-                position: relative;
-                user-select: none;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Static Tee Designer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <style>
+        .drawing-area {
+            position: absolute;
+            top: 60px;
+            left: 122px;
+            z-index: 10;
+            /* width: 200px;
+            height: 400px; */
+        }
 
-            #tshirt-div{
-                width: 452px;
-                height: 548px;
-                position: relative;
-                background-color: #fff;
-            }
+        .canvas-container {
+            /* width: 200px;
+            height: 400px; */
+            position: relative;
+            user-select: none;
+        }
 
-            #canvas{
-                position: absolute;
-                width: 200px;
-                height: 400px;
-                left: 0px;
-                top: 0px;
-                user-select: none;
-                cursor: default;
-            }
-        </style>
-    </head>
-    <body>
+        #tshirt-div {
+            width: 452px;
+            height: 548px;
+            position: relative;
+            background-color: #fff;
+        }
+
+        #main-custom {
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .field {
+            width: 100%;
+        }
+
+        .field .control {
+            width: 100%;
+        }
+
+        .field .control button {
+            width: 100%;
+        }
+
+        .formcontainer {
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container is-flex" id="main-custom">
         <!-- Create the container of the tool -->
         <div id="tshirt-div">
             <!--
                 Initially, the image will have the background tshirt that has transparency
                 So we can simply update the color with CSS or JavaScript dinamically
             -->
-            <img id="tshirt-backgroundpicture" src="./shirt_template.png"/>
+            <img id="tshirt-backgroundpicture" src="./shirt_template.png" />
 
             <div id="drawingArea" class="drawing-area">
                 <div class="canvas-container">
@@ -56,85 +72,97 @@
             </div>
         </div>
 
-        <!-- The select that will allow the user to pick one of the static designs -->
-        <br>
-        <label for="tshirt-design">T-Shirt Design:</label>
-        <select id="tshirt-design">
-            <option value="">Select one of our designs ...</option>
-            <option value="./A.png">A</option>
-            <option value="./B.png">B</option>
-            <option value="./C.png">C</option>
-            <option value="./D.png">D</option>
-            <option value="./E.png">E</option>
-        </select>
+        <div class="formcontainer">
+            <!-- The select that will allow the user to pick one of the static designs -->
+            <div class="field">
+                <label class="label" for="tshirt-design">T-Shirt Design:</label>
+                <p class="control">
+                    <div class="select is-fullwidth">
+                        <select id="tshirt-design">
+                            <option value="">Select one of our designs ...</option>
+                            <option value="./A.png">A</option>
+                            <option value="./B.png">B</option>
+                            <option value="./C.png">C</option>
+                            <option value="./D.png">D</option>
+                            <option value="./E.png">E</option>
+                        </select>
+                    </div>
+                </p>
+            </div>
+            <!-- The Select that allows the user to change the color of the T-Shirt -->
+            <div class="field">
+                <label class="label" for="tshirt-color">T-Shirt Color:</label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select id="tshirt-color">
+                            <!-- You can add any color with a new option and definings its hex code -->
+                            <option value="#191919">Black</option>
+                            <option value="#777777">Grey</option>
+                            <option value="#9b0000">Red</option>
+                            <option value="#b3a985">Beige</option>
+                            <option value="#ffffff">White</option>
+                            <option value="#f07700">Orange</option>
+                            <option value="#060048">Blue</option>
+                            <option value="#f3d400">Yellow</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control is-expanded">
+                    <button class="button is-link" onclick="redirectToForm()">Vote For This Combination</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Include Fabric.js in the page -->
+    <script src="./fabric.min.js"></script>
 
-        <!-- The Select that allows the user to change the color of the T-Shirt -->
-        <br><br>
-        <label for="tshirt-color">T-Shirt Color:</label>
-        <select id="tshirt-color">
-            <!-- You can add any color with a new option and definings its hex code -->
-            <option value="#191919">Black</option>
-            <option value="#777777">Grey</option>
-            <option value="#9b0000">Red</option>
-            <option value="#b3a985">Beige</option>
-            <option value="#ffffff">White</option>
-            <option value="#f07700">Orange</option>
-            <option value="#060048">Blue</option>
-            <option value="#f3d400">Yellow</option>
+    <script>
+        function redirectToForm() {
+            const sel = document.getElementById("tshirt-color")
+            const colour = sel.options[sel.selectedIndex].text
+            const sel2 = document.getElementById("tshirt-design")
+            const design = sel2.options[sel2.selectedIndex].text
+            const url =
+                "https://docs.google.com/forms/d/e/1FAIpQLSdM6AwVKYkfyOXXIhDs7N-wvcm87H6xGJu2MnxFuW1MQIRO3g/viewform?usp=pp_url&entry.576940278=" +
+                colour + "&entry.1513738710=" + design
+            alert("You will now be redirected to Google Forms. Submit the form to cast your vote!")
+            window.location.href = url;
+        }
 
+        const canvas = new fabric.Canvas('tshirt-canvas');
 
-        </select>
-
-        <br>
-        <br>
-
-        <button onclick="redirectToForm()">Vote For This Combination</button>
-
-        <!-- Include Fabric.js in the page -->
-        <script src="./fabric.min.js"></script>
-
-        <script>
-            function redirectToForm() {
-              let sel = document.getElementById("tshirt-color")
-              let colour = sel.options[sel.selectedIndex].text
-              let sel2 = document.getElementById("tshirt-design")
-              let design = sel2.options[sel2.selectedIndex].text
-              let url = "https://docs.google.com/forms/d/e/1FAIpQLSdM6AwVKYkfyOXXIhDs7N-wvcm87H6xGJu2MnxFuW1MQIRO3g/viewform?usp=pp_url&entry.576940278=" + colour + "&entry.1513738710=" + design
-              alert("You will now be redirected to Google Forms. Submit the form to cast your vote!")
-              window.location.href = url;
+        function updateTshirtImage(imageURL) {
+            // If the user doesn't pick an option of the select, clear the canvas
+            if (!imageURL) {
+                canvas.clear();
             }
 
-            let canvas = new fabric.Canvas('tshirt-canvas');
-
-            function updateTshirtImage(imageURL){
-                // If the user doesn't pick an option of the select, clear the canvas
-                if(!imageURL){
-                    canvas.clear();
-                }
-
-                // Create a new image that can be used in Fabric with the URL
-                fabric.Image.fromURL(imageURL, function(img) {
-                    // Define the image as background image of the Canvas
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                        // Scale the image to the canvas size
-                        scaleX: canvas.width / img.width,
-                        scaleY: canvas.height / img.height
-                    });
+            // Create a new image that can be used in Fabric with the URL
+            fabric.Image.fromURL(imageURL, function (img) {
+                // Define the image as background image of the Canvas
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                    // Scale the image to the canvas size
+                    scaleX: canvas.width / img.width,
+                    scaleY: canvas.height / img.height
                 });
-            }
+            });
+        }
 
-            // Update the TShirt color according to the selected color by the user
-            document.getElementById("tshirt-color").addEventListener("change", function(){
-                document.getElementById("tshirt-div").style.backgroundColor = this.value;
-            }, false);
+        // Update the TShirt color according to the selected color by the user
+        document.getElementById("tshirt-color").addEventListener("change", function () {
+            document.getElementById("tshirt-div").style.backgroundColor = this.value;
+        }, false);
 
-            // Update the TShirt color according to the selected color by the user
-            document.getElementById("tshirt-design").addEventListener("change", function(){
+        // Update the TShirt color according to the selected color by the user
+        document.getElementById("tshirt-design").addEventListener("change", function () {
 
-                // Call the updateTshirtImage method providing as first argument the URL
-                // of the image provided by the select
-                updateTshirtImage(this.value);
-            }, false);
-        </script>
-    </body>
+            // Call the updateTshirtImage method providing as first argument the URL
+            // of the image provided by the select
+            updateTshirtImage(this.value);
+        }, false);
+    </script>
+</body>
+
 </html>
